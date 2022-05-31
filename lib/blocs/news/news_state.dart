@@ -62,3 +62,14 @@ class NewsBookmarked extends NewsState {
   @override
   List<Object> get props => [articles];
 }
+
+class BookmarkNewsLoaded extends NewsState {
+  final List<Articles> articles;
+
+  const BookmarkNewsLoaded({
+    required this.articles,
+  });
+
+  @override
+  List<Object> get props => [articles];
+}

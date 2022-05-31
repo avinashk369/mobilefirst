@@ -41,7 +41,7 @@ class UserLogin extends StatelessWidget {
           ),
           const Spacer(),
           Text(
-            "Be finanicially discipline",
+            "Welcome to the world of MobileFirst",
             textAlign: TextAlign.center,
             style: kLabelStyleBold.copyWith(
                 color: Colors.deepPurple, fontSize: 18, letterSpacing: 1.8),

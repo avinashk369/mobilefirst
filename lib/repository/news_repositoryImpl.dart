@@ -13,11 +13,11 @@ class NewsRepositoryImpl implements NewsRepository {
     dio = Dio();
     //dio.options.headers["Content-Type"] = "application/json";
     //dio.interceptors.add(PrettyDioLogger());
-    dio.interceptors.add(LogInterceptor(
-      responseBody: true,
-      request: true,
-      requestBody: true,
-    ));
+    // dio.interceptors.add(LogInterceptor(
+    //   responseBody: true,
+    //   request: true,
+    //   requestBody: true,
+    // ));
     apiClient = ApiClient(dio);
   }
 //f191d7c85a504246ad2d0f499713ae2c

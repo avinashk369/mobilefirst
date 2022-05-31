@@ -25,7 +25,8 @@ class DbHeler {
           id INTEGER PRIMARY KEY,
           title TEXT,
           urlToImage TEXT,
-          bookmarked INTEGER
+          author TEXT,
+          status INTEGER
         )
       ''');
     });
@@ -38,8 +39,7 @@ class DbHeler {
 
   Future<List<Articles>> getBookmarkedArticles() async {
     final db = await instance.database;
-    var response =
-        await db.query('articles', where: 'bookmarked = ?', whereArgs: [1]);
+    var response = await db.query('articles');
     return response.map((article) => Articles.fromJson(article)).toList();
   }
 
