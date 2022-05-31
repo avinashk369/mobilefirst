@@ -24,9 +24,3 @@ class BookmarkNews extends NewsEvent {
   @override
   List<Object> get props => [];
 }
-
-class LoadBookMarkNews extends NewsEvent {
-  const LoadBookMarkNews();
-  @override
-  List<Object> get props => [];
-}

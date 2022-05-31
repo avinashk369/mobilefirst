@@ -2,6 +2,7 @@ library user_settings;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobilefirst/blocs/bookmark/bookmarkbolc.dart';
 import 'package:mobilefirst/blocs/news/newsbloc.dart';
 import 'package:mobilefirst/repository/news_repositoryImpl.dart';
 import 'package:mobilefirst/screens/news/boomark_news_list.dart';
@@ -16,7 +17,7 @@ class BookMarks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => NewsBloc(
+      create: (context) => BookmarkBloc(
         context.read<NewsRepositoryImpl>(),
       )..add(const LoadBookMarkNews()),
       child: Scaffold(
@@ -29,6 +30,18 @@ class BookMarks extends StatelessWidget {
               pinned: true,
               snap: false,
               elevation: 0,
+              actions: [
+                Builder(builder: (context) {
+                  return IconButton(
+                    icon: const Icon(Icons.refresh),
+                    onPressed: () {
+                      context
+                          .read<BookmarkBloc>()
+                          .add(const LoadBookMarkNews());
+                    },
+                  );
+                }),
+              ],
               flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
                   background: Column(
@@ -43,9 +56,8 @@ class BookMarks extends StatelessWidget {
               delegate: SliverChildListDelegate(
                 [
                   const SizedBox(height: 20),
-                  BlocBuilder<NewsBloc, NewsState>(
+                  BlocBuilder<BookmarkBloc, BookmarkState>(
                     builder: (context, state) {
-                      print(state.toString());
                       if (state is BookmarkNewsLoaded) {
                         return BookmarkNewsList(
                           articles: state.articles,
@@ -54,7 +66,7 @@ class BookMarks extends StatelessWidget {
                       if (state is NewsInitializing) {
                         return const LoadingUI();
                       }
-                      if (state is NewsError) {
+                      if (state is BookmarkError) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: Text(

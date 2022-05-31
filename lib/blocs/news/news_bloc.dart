@@ -17,20 +17,6 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
   NewsBloc(this._newsRepositoryImpl) : super(NewsInitializing()) {
     on<LoadNews>((event, emit) => _loadNews(event, emit));
     on<BookmarkNews>((event, emit) => _bookMarkNews(event, emit));
-    on<LoadBookMarkNews>(
-      (event, emit) => _loadBookmarkNews(event, emit),
-    );
-  }
-  // load bookmar news
-  Future _loadBookmarkNews(
-      LoadBookMarkNews event, Emitter<NewsState> emit) async {
-    try {
-      final news = await _newsRepositoryImpl.getBookmarkNews();
-
-      emit(BookmarkNewsLoaded(articles: news));
-    } on ServerError catch (e) {
-      emit(NewsError(message: "Something went wrong"));
-    }
   }
 
 // bookmark news
