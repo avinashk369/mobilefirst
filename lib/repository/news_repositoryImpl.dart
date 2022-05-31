@@ -13,11 +13,11 @@ class NewsRepositoryImpl implements NewsRepository {
     dio = Dio();
     //dio.options.headers["Content-Type"] = "application/json";
     //dio.interceptors.add(PrettyDioLogger());
-    // dio.interceptors.add(LogInterceptor(
-    //   responseBody: true,
-    //   request: true,
-    //   requestBody: true,
-    // ));
+    dio.interceptors.add(LogInterceptor(
+      responseBody: true,
+      request: true,
+      requestBody: true,
+    ));
     apiClient = ApiClient(dio);
   }
 //f191d7c85a504246ad2d0f499713ae2c
@@ -44,13 +44,27 @@ class NewsRepositoryImpl implements NewsRepository {
   Future<Articles> bookmarkNews(Articles article) async {
     late Articles articles;
     try {
-      articles = Articles();
       // make a entry in the database and return the article with added value that article has been bookmarked
-      article.isBookmarked = true;
-      await DbHeler.instance.insertBookmark(article);
+
+      articles = Articles();
+
+      articles.title = article.title ?? "";
+      articles.urlToImage = article.urlToImage ?? "";
+      articles.author = article.author ?? "";
+      articles.status = 1;
+      articles = await DbHeler.instance.insertBookmark(articles);
     } catch (e) {
       throw Exception(e.toString());
     }
     return articles;
+  }
+
+  @override
+  Future<List<Articles>> getBookmarkNews() async {
+    try {
+      return await DbHeler.instance.getBookmarkedArticles();
+    } catch (e) {
+      throw Exception(e.toString());
+    }
   }
 }

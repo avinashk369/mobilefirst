@@ -1,71 +1,77 @@
 library user_settings;
 
 import 'package:flutter/material.dart';
-import 'package:mobilefirst/routes/route_constants.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobilefirst/blocs/news/newsbloc.dart';
+import 'package:mobilefirst/repository/news_repositoryImpl.dart';
+import 'package:mobilefirst/screens/news/boomark_news_list.dart';
 import 'package:mobilefirst/styles/styles.dart';
-import 'package:mobilefirst/utils/preference_utils.dart';
 import 'package:mobilefirst/utils/theme_constants.dart';
 import 'package:mobilefirst/widgets/custom_appbar.dart';
+import 'package:mobilefirst/widgets/loading_ui.dart';
 
 class BookMarks extends StatelessWidget {
   const BookMarks({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: kToolbarHeight,
-            automaticallyImplyLeading: false,
-            floating: true,
-            pinned: true,
-            snap: false,
-            elevation: 0,
-            flexibleSpace: FlexibleSpaceBar(
-                collapseMode: CollapseMode.pin,
-                background: Column(
-                  children: const [
-                    CustomAppBar(
-                      title: 'Bookmarks',
-                    ),
-                  ],
-                )),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                const SizedBox(height: 20),
-                listTileCard(
-                  'Profile',
-                  () async {},
-                  const Icon(
-                    Icons.person,
-                  ),
-                ),
-                listTileCard(
-                  'Help',
-                  () async {},
-                  const Icon(
-                    Icons.help,
-                  ),
-                ),
-                listTileCard(
-                  'Log out',
-                  () async {
-                    await PreferenceUtils.clear();
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        homeRoute, (Route<dynamic> route) => false);
-                  },
-                  const Icon(
-                    Icons.exit_to_app,
-                    color: redColor,
-                  ),
-                ),
-              ],
+    return BlocProvider(
+      create: (context) => NewsBloc(
+        context.read<NewsRepositoryImpl>(),
+      )..add(const LoadBookMarkNews()),
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: kToolbarHeight,
+              automaticallyImplyLeading: false,
+              floating: true,
+              pinned: true,
+              snap: false,
+              elevation: 0,
+              flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.pin,
+                  background: Column(
+                    children: const [
+                      CustomAppBar(
+                        title: 'Bookmarks',
+                      ),
+                    ],
+                  )),
             ),
-          ),
-        ],
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  const SizedBox(height: 20),
+                  BlocBuilder<NewsBloc, NewsState>(
+                    builder: (context, state) {
+                      print(state.toString());
+                      if (state is BookmarkNewsLoaded) {
+                        return BookmarkNewsList(
+                          articles: state.articles,
+                        );
+                      }
+                      if (state is NewsInitializing) {
+                        return const LoadingUI();
+                      }
+                      if (state is NewsError) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                            state.message,
+                            textAlign: TextAlign.center,
+                            style: kLabelStyleBold.copyWith(color: redColor),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

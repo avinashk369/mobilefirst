@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobilefirst/blocs/news/newsbloc.dart';
 import 'package:mobilefirst/screens/news/news_list.dart';
 import 'package:mobilefirst/styles/styles.dart';
+import 'package:mobilefirst/utils/preference_utils.dart';
 import 'package:mobilefirst/utils/theme_constants.dart';
 import 'package:mobilefirst/utils/utils.dart';
 import 'package:mobilefirst/widgets/custom_appbar.dart';
@@ -10,7 +12,8 @@ import 'package:mobilefirst/widgets/loading_ui.dart';
 import 'package:mobilefirst/widgets/search_bar.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({Key? key, this.user}) : super(key: key);
+  final User? user;
 
   @override
   State<Home> createState() => _HomeState();
@@ -53,15 +56,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //added floating action button to apply filter
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: primaryLight,
-        onPressed: () {},
-        child: const Icon(
-          Icons.filter_list,
-          color: secondaryLight,
-        ),
-      ),
       body: SafeArea(
         child: CustomScrollView(
           controller: scrollController,
@@ -87,9 +81,9 @@ class _HomeState extends State<Home> {
               flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
                   background: Column(
-                    children: const [
+                    children: [
                       CustomAppBar(
-                        title: home,
+                        title: "Hi, ${PreferenceUtils.getString(userName)}",
                       ),
                     ],
                   )),
@@ -99,7 +93,6 @@ class _HomeState extends State<Home> {
                 [
                   BlocBuilder<NewsBloc, NewsState>(
                     builder: (context, state) {
-                      print(state.toString());
                       if (state is NewsLoaded) {
                         reachedEnd = state.hasReachedMax;
                         return NewsList(

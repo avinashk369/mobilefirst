@@ -66,7 +66,9 @@ class NewsCard extends StatelessWidget {
                         style: kLabelStyleBold,
                       ),
                       const Spacer(),
-                      Text(articles.source!.name!),
+                      Text(articles.source != null
+                          ? articles.source!.name!
+                          : ""),
                       Text(articles.author ?? "Unknown"),
                     ],
                   ),
@@ -76,7 +78,9 @@ class NewsCard extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () => bookmark(articles),
-                  icon: const Icon(Icons.bookmark_outline),
+                  icon: Icon(articles.status == 1
+                      ? Icons.bookmark
+                      : Icons.bookmark_outline),
                 )
               ],
             ),

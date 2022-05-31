@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,9 +9,12 @@ import 'blocs/bloc_delegate.dart';
 import 'routes/route_constants.dart';
 import 'routes/route_generator.dart';
 import 'styles/custom_theme.dart';
+import 'utils/preference_utils.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  await PreferenceUtils.getInstance();
   Paint.enableDithering = true;
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,

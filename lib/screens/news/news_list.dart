@@ -29,7 +29,7 @@ class NewsList extends StatelessWidget {
                 },
                 bookmark: (article) {
                   context.read<NewsBloc>().add(
-                        BookmarkNews(article: article),
+                        BookmarkNews(article: article.copyWith(status: 1)),
                       );
                 },
               );
