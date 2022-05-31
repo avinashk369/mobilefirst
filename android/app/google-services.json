@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "504698736866",
+    "project_id": "mobilefirst-d519f",
+    "storage_bucket": "mobilefirst-d519f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:504698736866:android:b77e1f5a59fe98e2df0ebb",
+        "android_client_info": {
+          "package_name": "com.test.mobilefirst"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "504698736866-tsd8n4vhu75u8dqor26lg0ml63qkqnv6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.test.mobilefirst",
+            "certificate_hash": "c4ccf3649e4b12965c3da2ea5f65d9186d26b88c"
+          }
+        },
+        {
+          "client_id": "504698736866-vh25ocllq43er3p5fp84ndqtnncd7lhl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-Jf5Vw8oZCya_orCEIctL0MIS3_Nh9KM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "504698736866-vh25ocllq43er3p5fp84ndqtnncd7lhl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
