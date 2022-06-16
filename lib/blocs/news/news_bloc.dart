@@ -6,13 +6,13 @@ import 'package:equatable/equatable.dart';
 import 'package:mobilefirst/models/ServerError.dart';
 import 'package:mobilefirst/models/news/article.dart';
 import 'package:mobilefirst/models/news/news_model.dart';
-import 'package:mobilefirst/repository/news_repositoryImpl.dart';
+import 'package:mobilefirst/repository/news_repository.dart';
 import 'package:mobilefirst/utils/utils.dart';
 part 'news_event.dart';
 part 'news_state.dart';
 
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
-  final NewsRepositoryImpl _newsRepositoryImpl;
+  final NewsRepository _newsRepositoryImpl;
 
   NewsBloc(this._newsRepositoryImpl) : super(NewsInitializing()) {
     on<LoadNews>((event, emit) => _loadNews(event, emit));
