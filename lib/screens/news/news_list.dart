@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobilefirst/blocs/news/newsbloc.dart';
 import 'package:mobilefirst/models/news/article.dart';
-import 'package:mobilefirst/routes/route_constants.dart';
 import 'package:mobilefirst/widgets/loading_ui.dart';
 import 'news_card.dart';
+import 'news_detail.dart';
 
 class NewsList extends StatelessWidget {
   const NewsList(
@@ -24,8 +24,14 @@ class NewsList extends StatelessWidget {
             : NewsCard(
                 articles: articles[index],
                 onTap: (article) {
-                  Navigator.of(context)
-                      .pushNamed(newsDetail, arguments: article);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => NewsDetail(
+                        articles: article,
+                      ),
+                    ),
+                  );
                 },
                 bookmark: (article) {
                   context.read<NewsBloc>().add(

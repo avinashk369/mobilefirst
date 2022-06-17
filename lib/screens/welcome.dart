@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobilefirst/screens/navbar/demo.dart';
 import 'package:mobilefirst/screens/todo/todo_mgmt.dart';
 import 'package:mobilefirst/screens/user_login.dart';
 import 'package:mobilefirst/utils/preference_utils.dart';
@@ -22,7 +23,7 @@ class _WelcomeState extends State<Welcome> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: TodoMgmt(),
+      body: Demo(),
     );
   }
 }
