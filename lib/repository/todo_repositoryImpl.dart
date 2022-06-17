@@ -9,9 +9,9 @@ class TodoRepositoryImpl {
   TodoRepositoryImpl() {
     dio = Dio();
     dio.options.headers["X-Parse-Client-Key"] =
-        "URq27vXJwxgUBcPuWWOOLH2w7y7V8JsuyoLFxAFO";
+        "XzJIfM50JsF8tuMi1USwsAGEpe7R0cvsF8MTV1mk";
     dio.options.headers["X-Parse-Application-Id"] =
-        "aPVFCkwUWwdHYL5A5qXPjVXdRK82s0Otz1LrlZyd";
+        "OwYc53sQaycCCfvoEtnBJiILnqdLR7D8XTChzEn8";
     //dio.interceptors.add(PrettyDioLogger());
     dio.interceptors.add(LogInterceptor(
       responseBody: true,
@@ -42,6 +42,11 @@ class TodoRepositoryImpl {
     late TodoModel todoList;
     try {
       todoList = await apiClient.getDietPlan("CBflLvCTXO");
+      // await apiClient.saveDietPlan({
+      //   "Name": "Hozefa",
+      //   "Description": "Testing..."
+      // });
+      //await apiClient.deleteDietPlan("yHs0itDpkx");
       return todoList;
     } catch (e, stacktrace) {
       print(stacktrace.toString());
@@ -59,7 +64,6 @@ class TodoRepositoryImpl {
 
   // delete todos
   Future<void> deleteTodo(String id) async {
-    var todo = ParseObject('Todo')..objectId = id;
-    await todo.delete();
+    await apiClient.deleteDietPlan(id);
   }
 }

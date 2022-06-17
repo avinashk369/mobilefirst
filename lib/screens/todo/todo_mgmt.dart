@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mobilefirst/repository/todo_repositoryImpl.dart';
+import 'package:mobilefirst/screens/todo/todo_add.dart';
 import 'package:mobilefirst/styles/styles.dart';
 import 'package:mobilefirst/widgets/custom_style_arrow.dart';
 import 'package:mobilefirst/widgets/loading_ui.dart';
@@ -92,6 +94,20 @@ class _TodoMgmtState extends State<TodoMgmt> {
               style: TextStyle(color: Colors.white)),
           backgroundColor: Colors.blueAccent,
           centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  CupertinoPageRoute(builder: (context) => const TodoMgmt()),
+                );
+              },
+              icon: const Icon(
+                Icons.refresh,
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
         body: Column(
           children: [
@@ -118,22 +134,26 @@ class _TodoMgmtState extends State<TodoMgmt> {
 
                                   // A pane can dismiss the Slidable.
                                   dismissible: DismissiblePane(onDismissed: () {
-                                    context.read<TodoBloc>().add(
-                                          DeleteTodo(state.todos[index]),
-                                        );
+                                    BlocProvider.of<TodoBloc>(context).add(
+                                      DeleteTodo(state.todos[index]),
+                                    );
                                   }),
 
                                   // All actions are defined in the children parameter.
-                                  children: const [
+                                  children: [
                                     // A SlidableAction can have an icon and/or a label.
                                     SlidableAction(
-                                      onPressed: null,
-                                      backgroundColor: Color(0xFFFE4A49),
+                                      onPressed: (context) {
+                                        BlocProvider.of<TodoBloc>(context).add(
+                                          DeleteTodo(state.todos[index]),
+                                        );
+                                      },
+                                      backgroundColor: const Color(0xFFFE4A49),
                                       foregroundColor: Colors.white,
                                       icon: Icons.delete,
                                       label: 'Delete',
                                     ),
-                                    SlidableAction(
+                                    const SlidableAction(
                                       onPressed: null,
                                       backgroundColor: Color(0xFF21B7CA),
                                       foregroundColor: Colors.white,
@@ -143,7 +163,7 @@ class _TodoMgmtState extends State<TodoMgmt> {
                                   ],
                                 ),
                                 child: Builder(builder: (context) {
-                                  if (state.todos[index].name == "Low Fat") {
+                                  if (state.todos[index].name == "Diet Plan") {
                                     WidgetsBinding.instance
                                         .addPostFrameCallback((timeStamp) {
                                       Slidable.of(context)?.openEndActionPane(
@@ -211,6 +231,15 @@ class _TodoMgmtState extends State<TodoMgmt> {
             ),
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(CupertinoPageRoute(
+              builder: ((context) => ToDOAdd()),
+            ));
+          },
+          backgroundColor: Colors.blue,
+          child: const Icon(Icons.add_rounded),
+        ),
       ),
     );
   }
@@ -249,6 +278,8 @@ class _TodoMgmtState extends State<TodoMgmt> {
   Future<void> deleteTodo(String id) async {
     var todo = ParseObject('Todo')..objectId = id;
     await todo.delete();
+    await todo.save();
+    setState(() {});
   }
 }
 

@@ -21,10 +21,8 @@ class _WelcomeState extends State<Welcome> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: (name.isNotEmpty)
-          ? const TodoMgmt() //FireCrud() //Dashboard()
-          : const UserLogin(),
+    return const Scaffold(
+      body: TodoMgmt(),
     );
   }
 }

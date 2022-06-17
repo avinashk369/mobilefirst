@@ -14,7 +14,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
   TodoBloc(this._todoRepositoryImpl) : super(TodoInitializing()) {
     on<LoadTodos>((event, emit) => _loadTodos(event, emit));
-    on<SaveTodo>((event, emit) => _saveTodo(event, emit));
     on<DeleteTodo>((event, emit) => _deleteTodo(event, emit));
   }
   // delete todo
@@ -22,6 +21,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     try {
       final state = this.state;
       if (state is TodoLoaded) {
+        await _todoRepositoryImpl.deleteTodo(event.todo.objectId!);
         List<TodoModel> todos = state.todos
             .where((element) => element.objectId != event.todo.objectId)
             .toList();
