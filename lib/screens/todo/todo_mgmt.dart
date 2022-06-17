@@ -153,12 +153,18 @@ class _TodoMgmtState extends State<TodoMgmt> {
                                       icon: Icons.delete,
                                       label: 'Delete',
                                     ),
-                                    const SlidableAction(
-                                      onPressed: null,
-                                      backgroundColor: Color(0xFF21B7CA),
+                                    SlidableAction(
+                                      onPressed: (context) {
+                                        Navigator.of(context)
+                                            .push(CupertinoPageRoute(
+                                          builder: ((context) => ToDOAdd(
+                                              todo: state.todos[index])),
+                                        ));
+                                      },
+                                      backgroundColor: const Color(0xFF21B7CA),
                                       foregroundColor: Colors.white,
-                                      icon: Icons.share,
-                                      label: 'Share',
+                                      icon: Icons.update_rounded,
+                                      label: 'Update',
                                     ),
                                   ],
                                 ),
