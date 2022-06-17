@@ -96,7 +96,7 @@ class _NewsDetailState extends State<NewsDetail> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
-                      widget.articles.description!,
+                      widget.articles.description ?? "",
                       style: kLabelStyle,
                     ),
                   ),

@@ -4,6 +4,7 @@ import 'package:mobilefirst/blocs/news/newsbloc.dart';
 import 'package:mobilefirst/models/news/article.dart';
 import 'package:mobilefirst/routes/route_constants.dart';
 import 'news_card.dart';
+import 'news_detail.dart';
 
 class BookmarkNewsList extends StatelessWidget {
   const BookmarkNewsList({
@@ -22,7 +23,15 @@ class BookmarkNewsList extends StatelessWidget {
         return NewsCard(
           articles: articles[index],
           onTap: (article) {
-            Navigator.of(context).pushNamed(newsDetail, arguments: article);
+            //Navigator.of(context).pushNamed(newsDetail, arguments: article);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) => NewsDetail(
+                  articles: article,
+                ),
+              ),
+            );
           },
           bookmark: (article) {
             context.read<NewsBloc>().add(
