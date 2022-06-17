@@ -21,9 +21,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     try {
       final state = this.state;
       if (state is TodoLoaded) {
-        await _todoRepositoryImpl.deleteTodo(event.todo.objectId!);
+        await _todoRepositoryImpl.deleteTodo(event.id);
         List<TodoModel> todos = state.todos
-            .where((element) => element.objectId != event.todo.objectId)
+            .where((element) => element.objectId != event.id)
             .toList();
         emit(TodoLoaded(todos: todos));
       }

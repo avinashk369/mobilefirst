@@ -1,12 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:mobilefirst/models/todo_model.dart';
 import 'package:mobilefirst/repository/todo_repositoryImpl.dart';
 import 'package:mobilefirst/screens/todo/todo_add.dart';
 import 'package:mobilefirst/styles/styles.dart';
 import 'package:mobilefirst/widgets/custom_style_arrow.dart';
-import 'package:mobilefirst/widgets/loading_ui.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 
@@ -20,8 +22,10 @@ class TodoMgmt extends StatefulWidget {
 }
 
 class _TodoMgmtState extends State<TodoMgmt> {
-  final todoController = TextEditingController();
   SuperTooltip? tooltip;
+  LiveQuery liveQuery = LiveQuery();
+  late QueryBuilder<ParseObject> todoQuery;
+
   void onTap() {
     if (tooltip != null && tooltip!.isOpen) {
       tooltip!.close();
@@ -64,18 +68,15 @@ class _TodoMgmtState extends State<TodoMgmt> {
     tooltip!.show(context);
   }
 
-  void addToDo() async {
-    if (todoController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Empty title"),
-        duration: Duration(seconds: 2),
-      ));
-      return;
-    }
-    await saveTodo(todoController.text);
-    setState(() {
-      todoController.clear();
-    });
+  void startLiveQuery() async {
+    todoQuery = QueryBuilder<ParseObject>(ParseObject("Diet_Plans"));
+    await liveQuery.client.subscribe(todoQuery);
+  }
+
+  @override
+  void initState() {
+    startLiveQuery();
+    super.initState();
   }
 
   @override
@@ -94,116 +95,191 @@ class _TodoMgmtState extends State<TodoMgmt> {
               style: TextStyle(color: Colors.white)),
           backgroundColor: Colors.blueAccent,
           centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  CupertinoPageRoute(builder: (context) => const TodoMgmt()),
-                );
-              },
-              icon: const Icon(
-                Icons.refresh,
-                color: Colors.white,
-              ),
-            ),
-          ],
         ),
         body: Column(
           children: [
-            BlocBuilder<TodoBloc, TodoState>(
-              builder: ((context, state) {
-                if (state is TodoInitializing) {
-                  return const LoadingUI();
-                }
-                if (state is TodoLoaded) {
+            ParseLiveListWidget<ParseObject>(
+              query: todoQuery,
+              reverse: false,
+              shrinkWrap: true,
+              childBuilder: (BuildContext context,
+                  ParseLiveListElementSnapshot<ParseObject> snapshot) {
+                if (snapshot.failed) {
+                  return const Text('something went wrong!');
+                } else if (snapshot.hasData) {
                   return SlidableAutoCloseBehavior(
-                    child: ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) =>
-                            Builder(builder: (context) {
-                              return Slidable(
-                                key: ObjectKey(state.todos[index]),
-                                closeOnScroll: true,
-                                groupTag: "todo",
-                                // The start action pane is the one at the left or the top side.
-                                endActionPane: ActionPane(
-                                  // A motion is a widget used to control how the pane animates.
-                                  motion: const ScrollMotion(),
+                    child: Slidable(
+                      key: ObjectKey(snapshot.loadedData),
+                      closeOnScroll: true,
+                      groupTag: "todo",
+                      // The start action pane is the one at the left or the top side.
+                      endActionPane: ActionPane(
+                        // A motion is a widget used to control how the pane animates.
+                        motion: const ScrollMotion(),
 
-                                  // A pane can dismiss the Slidable.
-                                  dismissible: DismissiblePane(onDismissed: () {
-                                    BlocProvider.of<TodoBloc>(context).add(
-                                      DeleteTodo(state.todos[index]),
-                                    );
-                                  }),
+                        // A pane can dismiss the Slidable.
+                        dismissible: DismissiblePane(onDismissed: () {
+                          BlocProvider.of<TodoBloc>(context).add(
+                            DeleteTodo(snapshot.loadedData!.objectId!),
+                          );
+                        }),
 
-                                  // All actions are defined in the children parameter.
-                                  children: [
-                                    // A SlidableAction can have an icon and/or a label.
-                                    SlidableAction(
-                                      onPressed: (context) {
-                                        BlocProvider.of<TodoBloc>(context).add(
-                                          DeleteTodo(state.todos[index]),
-                                        );
-                                      },
-                                      backgroundColor: const Color(0xFFFE4A49),
-                                      foregroundColor: Colors.white,
-                                      icon: Icons.delete,
-                                      label: 'Delete',
-                                    ),
-                                    SlidableAction(
-                                      onPressed: (context) {
-                                        Navigator.of(context)
-                                            .push(CupertinoPageRoute(
-                                          builder: ((context) => ToDOAdd(
-                                              todo: state.todos[index])),
-                                        ));
-                                      },
-                                      backgroundColor: const Color(0xFF21B7CA),
-                                      foregroundColor: Colors.white,
-                                      icon: Icons.update_rounded,
-                                      label: 'Update',
-                                    ),
-                                  ],
-                                ),
-                                child: Builder(builder: (context) {
-                                  if (state.todos[index].name == "Diet Plan") {
-                                    WidgetsBinding.instance
-                                        .addPostFrameCallback((timeStamp) {
-                                      Slidable.of(context)?.openEndActionPane(
-                                        duration:
-                                            const Duration(milliseconds: 500),
-                                        curve: Curves.ease,
-                                      );
-                                      //onTap();
-                                    });
-                                  }
-                                  return ListTile(
-                                    onTap: onTap,
-                                    title: Text(
-                                      state.todos[index].name!,
-                                      style: kLabelStyleBold,
-                                    ),
-                                    subtitle: Text(
-                                      state.todos[index].description!,
-                                    ),
-                                    trailing: const Icon(
-                                      Icons.keyboard_arrow_right,
-                                      color: Colors.grey,
-                                    ),
-                                  );
-                                }),
+                        // All actions are defined in the children parameter.
+                        children: [
+                          // A SlidableAction can have an icon and/or a label.
+                          SlidableAction(
+                            onPressed: (context) {
+                              BlocProvider.of<TodoBloc>(context).add(
+                                DeleteTodo(snapshot.loadedData!.objectId!),
                               );
-                            }),
-                        separatorBuilder: (_, __) => const Divider(),
-                        itemCount: state.todos.length),
+                            },
+                            backgroundColor: const Color(0xFFFE4A49),
+                            foregroundColor: Colors.white,
+                            icon: Icons.delete,
+                            label: 'Delete',
+                          ),
+                          SlidableAction(
+                            onPressed: (context) {
+                              Navigator.of(context).push(CupertinoPageRoute(
+                                builder: ((context) => ToDOAdd(
+                                    id: snapshot.loadedData!.objectId!)),
+                              ));
+                            },
+                            backgroundColor: const Color(0xFF21B7CA),
+                            foregroundColor: Colors.white,
+                            icon: Icons.update_rounded,
+                            label: 'Update',
+                          ),
+                        ],
+                      ),
+                      child: Builder(builder: (context) {
+                        if (snapshot.loadedData!.get("Name") == "Diet Plan") {
+                          WidgetsBinding.instance
+                              .addPostFrameCallback((timeStamp) {
+                            Slidable.of(context)?.openEndActionPane(
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.ease,
+                            );
+                            //onTap();
+                          });
+                        }
+                        return ListTile(
+                          onTap: onTap,
+                          title: Text(
+                            snapshot.loadedData!.get("Name"),
+                            style: kLabelStyleBold,
+                          ),
+                          subtitle: Text(
+                            snapshot.loadedData!.get("Description"),
+                          ),
+                          trailing: const Icon(
+                            Icons.keyboard_arrow_right,
+                            color: Colors.grey,
+                          ),
+                        );
+                      }),
+                    ),
+                  );
+                } else {
+                  return const ListTile(
+                    leading: CircularProgressIndicator(),
                   );
                 }
-                return const SizedBox.shrink();
-              }),
+              },
             ),
+            // BlocBuilder<TodoBloc, TodoState>(
+            //   builder: ((context, state) {
+            //     if (state is TodoInitializing) {
+            //       return const LoadingUI();
+            //     }
+            //     if (state is TodoLoaded) {
+            //       return SlidableAutoCloseBehavior(
+            //         child: ListView.separated(
+            //             shrinkWrap: true,
+            //             physics: const NeverScrollableScrollPhysics(),
+            //             itemBuilder: (context, index) =>
+            //                 Builder(builder: (context) {
+            //                   return Slidable(
+            //                     key: ObjectKey(state.todos[index]),
+            //                     closeOnScroll: true,
+            //                     groupTag: "todo",
+            //                     // The start action pane is the one at the left or the top side.
+            //                     endActionPane: ActionPane(
+            //                       // A motion is a widget used to control how the pane animates.
+            //                       motion: const ScrollMotion(),
+
+            //                       // A pane can dismiss the Slidable.
+            //                       dismissible: DismissiblePane(onDismissed: () {
+            //                         BlocProvider.of<TodoBloc>(context).add(
+            //                           DeleteTodo(state.todos[index]),
+            //                         );
+            //                       }),
+
+            //                       // All actions are defined in the children parameter.
+            //                       children: [
+            //                         // A SlidableAction can have an icon and/or a label.
+            //                         SlidableAction(
+            //                           onPressed: (context) {
+            //                             BlocProvider.of<TodoBloc>(context).add(
+            //                               DeleteTodo(state.todos[index]),
+            //                             );
+            //                           },
+            //                           backgroundColor: const Color(0xFFFE4A49),
+            //                           foregroundColor: Colors.white,
+            //                           icon: Icons.delete,
+            //                           label: 'Delete',
+            //                         ),
+            //                         SlidableAction(
+            //                           onPressed: (context) {
+            //                             Navigator.of(context)
+            //                                 .push(CupertinoPageRoute(
+            //                               builder: ((context) => ToDOAdd(
+            //                                   todo: state.todos[index])),
+            //                             ));
+            //                           },
+            //                           backgroundColor: const Color(0xFF21B7CA),
+            //                           foregroundColor: Colors.white,
+            //                           icon: Icons.update_rounded,
+            //                           label: 'Update',
+            //                         ),
+            //                       ],
+            //                     ),
+            //                     child: Builder(builder: (context) {
+            //                       if (state.todos[index].name == "Diet Plan") {
+            //                         WidgetsBinding.instance
+            //                             .addPostFrameCallback((timeStamp) {
+            //                           Slidable.of(context)?.openEndActionPane(
+            //                             duration:
+            //                                 const Duration(milliseconds: 500),
+            //                             curve: Curves.ease,
+            //                           );
+            //                           //onTap();
+            //                         });
+            //                       }
+            //                       return ListTile(
+            //                         onTap: onTap,
+            //                         title: Text(
+            //                           state.todos[index].name!,
+            //                           style: kLabelStyleBold,
+            //                         ),
+            //                         subtitle: Text(
+            //                           state.todos[index].description!,
+            //                         ),
+            //                         trailing: const Icon(
+            //                           Icons.keyboard_arrow_right,
+            //                           color: Colors.grey,
+            //                         ),
+            //                       );
+            //                     }),
+            //                   );
+            //                 }),
+            //             separatorBuilder: (_, __) => const Divider(),
+            //             itemCount: state.todos.length),
+            //       );
+            //     }
+            //     return const SizedBox.shrink();
+            //   }),
+            // ),
             CustomPaint(
               painter: CustomStyleArrow(Colors.grey),
               child: Container(

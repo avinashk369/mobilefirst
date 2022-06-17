@@ -66,4 +66,9 @@ class TodoRepositoryImpl {
   Future<void> deleteTodo(String id) async {
     await apiClient.deleteDietPlan(id);
   }
+
+  //get single diet item
+  Future<TodoModel> getDietPlan(String id) async {
+    return await apiClient.getSingleDietPlan(id);
+  }
 }

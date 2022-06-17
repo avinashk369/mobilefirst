@@ -25,8 +25,9 @@ void main() async {
     dotenv.env['APP_ID']!,
     dotenv.env['API_URL']!,
     clientKey: dotenv.env['CLIENT_KEY'],
-    debug: false,
+    debug: true,
     autoSendSessionId: true,
+    liveQueryUrl: "https://todoappdemo.b4a.io",
   );
 
   // var firstObject = ParseObject('FirstClass')

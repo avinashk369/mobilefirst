@@ -23,6 +23,7 @@ abstract class ApiClient {
   @DELETE("https://parseapi.back4app.com/classes/Diet_Plans/{objectId}")
   Future<TodoModel> deleteDietPlan(@Path("objectId") String objectId);
 
-  // @POST("https://parseapi.back4app.com/classes/Diet_Plans")
-  // Future<void> setDietPlan(@Body() Map<String, String> data);
+  @GET("https://parseapi.back4app.com/classes/Diet_Plans/{objectId}")
+  Future<TodoModel> getSingleDietPlan(@Path("objectId") String objectId);
+
 }
