@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobilefirst/blocs/navigation/nav_bloc.dart';
 import 'package:mobilefirst/screens/navbar/demo.dart';
 import 'package:mobilefirst/screens/todo/todo_mgmt.dart';
 import 'package:mobilefirst/screens/user_login.dart';
@@ -22,8 +24,19 @@ class _WelcomeState extends State<Welcome> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: TodoMgmt(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<NavBloc>(
+          create: (context) => NavBloc(),
+        ),
+      ],
+      child: Scaffold(
+        body: Builder(builder: (context) {
+          return Demo(
+            navBloc: context.read<NavBloc>(),
+          );
+        }),
+      ),
     );
   }
 }

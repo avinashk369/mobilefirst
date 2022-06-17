@@ -29,10 +29,7 @@ class NavigationDemo extends StatelessWidget {
           builder: (context, state) {
             return IndexedStack(
               index: state,
-              children: [
-                NavigationItems.items[0].page,
-                NavigationItems.items[1].page,
-              ],
+              children: NavigationItems.items.map((e) => e.page).toList(),
             );
           },
         ),
@@ -62,14 +59,13 @@ class NavigationDemo extends StatelessWidget {
                   onDestinationSelected: (int index) {
                     context.read<NavigationBloc>().changeNavigation(index);
                   },
-                  destinations: [
-                    for (final tabItem in NavigationItems.items)
-                      NavigationDestination(
-                        icon: tabItem.icon,
-                        label: tabItem.title,
-                        selectedIcon: tabItem.selectedIcon,
-                      ),
-                  ],
+                  destinations: NavigationItems.items.map((item) {
+                    return NavigationDestination(
+                      icon: item.icon,
+                      label: item.title,
+                      selectedIcon: item.selectedIcon,
+                    );
+                  }).toList(),
                 ),
               ),
             );

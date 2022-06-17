@@ -1,36 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobilefirst/blocs/navigation/navigation.bloc.dart';
+import 'package:mobilefirst/blocs/navigation/nav_bloc.dart';
+import 'package:mobilefirst/models/todo_model.dart';
 import 'package:mobilefirst/repository/news_repositoryImpl.dart';
 
 import '../../blocs/news/newsbloc.dart';
 import 'tab_navigator.dart';
 
-class Demo extends StatefulWidget {
-  const Demo({Key? key}) : super(key: key);
+List<String> pageKeys = ["Page1", "Page2"];
+final Map<String, GlobalKey<NavigatorState>> _navigatorKeys = {
+  "Page1": GlobalKey<NavigatorState>(),
+  "Page2": GlobalKey<NavigatorState>()
+};
 
-  @override
-  State<Demo> createState() => _DemoState();
-}
+class Demo extends StatelessWidget {
+  const Demo({Key? key, required this.navBloc}) : super(key: key);
+  final NavBloc navBloc;
 
-class _DemoState extends State<Demo> {
   // persistent bottom navigation bar
-  String _currentPage = "Page1";
-  List<String> pageKeys = ["Page1", "Page2"];
-  final Map<String, GlobalKey<NavigatorState>> _navigatorKeys = {
-    "Page1": GlobalKey<NavigatorState>(),
-    "Page2": GlobalKey<NavigatorState>()
-  };
-  int _selectedIndex = 0;
 
   void _selectTab(String tabItem, int index) {
-    if (tabItem == _currentPage) {
+    if (tabItem == navBloc.state.name) {
       _navigatorKeys[tabItem]!.currentState!.popUntil((route) => route.isFirst);
     } else {
-      setState(() {
-        _currentPage = pageKeys[index];
-        _selectedIndex = index;
-      });
+      navBloc.changeNavigation(tabItem, index);
     }
   }
 
@@ -47,64 +40,74 @@ class _DemoState extends State<Demo> {
             ),
         ),
       ],
-      child: WillPopScope(
-        onWillPop: () async {
-          final isFirstRouteInCurrentTab =
-              !await _navigatorKeys[_currentPage]!.currentState!.maybePop();
-          if (isFirstRouteInCurrentTab) {
-            if (_currentPage != "Page1") {
-              _selectTab("Page1", 1);
+      child: BlocBuilder<NavBloc, TodoModel>(
+          bloc: navBloc,
+          builder: (context, state) {
+            return WillPopScope(
+              onWillPop: () async {
+                final isFirstRouteInCurrentTab =
+                    !await _navigatorKeys[state.name]!.currentState!.maybePop();
+                if (isFirstRouteInCurrentTab) {
+                  if (state.name != "Page1") {
+                    _selectTab("Page1", 1);
 
-              return false;
-            }
-          }
-          // let system handle back button if we're on the first route
-          return isFirstRouteInCurrentTab;
-        },
-        child: Scaffold(
-          body: Stack(
-            children: pages.map((e) => _buildOffstageNavigator(e)).toList(),
-          ),
-          bottomNavigationBar: SizedBox(
-            child: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              currentIndex: _selectedIndex,
-              onTap: (index) => _selectTab(pageKeys[index], index),
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              selectedIconTheme: const IconThemeData(color: Colors.blue),
-              items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Column(
-                    children: [
-                      const Icon(Icons.call),
-                      const Text("Calls"),
-                      _selectedIndex == 0 ? indicator() : Container()
-                    ],
-                  ),
-                  label: 'Calls',
+                    return false;
+                  }
+                }
+                // let system handle back button if we're on the first route
+                return isFirstRouteInCurrentTab;
+              },
+              child: Scaffold(
+                body: Stack(
+                  children:
+                      pages.map((e) => _buildOffstageNavigator(e)).toList(),
                 ),
-                BottomNavigationBarItem(
-                  icon: Column(
-                    children: [
-                      const Icon(Icons.camera),
-                      const Text("Camera"),
-                      _selectedIndex == 1 ? indicator() : Container(),
-                    ],
-                  ),
-                  label: 'Camera',
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+                bottomNavigationBar: BlocBuilder<NavBloc, TodoModel>(
+                    bloc: navBloc,
+                    builder: (context, state) {
+                      return SizedBox(
+                        child: BottomNavigationBar(
+                          type: BottomNavigationBarType.fixed,
+                          currentIndex: state.carbs!,
+                          onTap: (index) => _selectTab(pageKeys[index], index),
+                          showSelectedLabels: false,
+                          showUnselectedLabels: false,
+                          selectedIconTheme:
+                              const IconThemeData(color: Colors.blue),
+                          items: <BottomNavigationBarItem>[
+                            BottomNavigationBarItem(
+                              icon: Column(
+                                children: [
+                                  const Icon(Icons.home),
+                                  const Text("Home"),
+                                  state.carbs == 0 ? indicator() : Container()
+                                ],
+                              ),
+                              label: 'Home',
+                            ),
+                            BottomNavigationBarItem(
+                              icon: Column(
+                                children: [
+                                  const Icon(Icons.bookmark),
+                                  const Text("Bookmarks"),
+                                  state.carbs == 1 ? indicator() : Container(),
+                                ],
+                              ),
+                              label: 'Bookmarks',
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+              ),
+            );
+          }),
     );
   }
 
   Widget _buildOffstageNavigator(String tabItem) {
     return Offstage(
-      offstage: _currentPage != tabItem,
+      offstage: navBloc.state.name != tabItem,
       child: TabNavigator(
         navigatorKey: _navigatorKeys[tabItem]!,
         tabItem: tabItem,
