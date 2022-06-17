@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobilefirst/blocs/navigation/nav_bloc.dart';
-import 'package:mobilefirst/models/todo_model.dart';
+import 'package:mobilefirst/models/navigation/nav_item.dart';
 import 'package:mobilefirst/repository/news_repositoryImpl.dart';
 
 import '../../blocs/news/newsbloc.dart';
@@ -40,7 +40,7 @@ class Demo extends StatelessWidget {
             ),
         ),
       ],
-      child: BlocBuilder<NavBloc, TodoModel>(
+      child: BlocBuilder<NavBloc, NavItem>(
           bloc: navBloc,
           builder: (context, state) {
             return WillPopScope(
@@ -62,43 +62,38 @@ class Demo extends StatelessWidget {
                   children:
                       pages.map((e) => _buildOffstageNavigator(e)).toList(),
                 ),
-                bottomNavigationBar: BlocBuilder<NavBloc, TodoModel>(
-                    bloc: navBloc,
-                    builder: (context, state) {
-                      return SizedBox(
-                        child: BottomNavigationBar(
-                          type: BottomNavigationBarType.fixed,
-                          currentIndex: state.carbs!,
-                          onTap: (index) => _selectTab(pageKeys[index], index),
-                          showSelectedLabels: false,
-                          showUnselectedLabels: false,
-                          selectedIconTheme:
-                              const IconThemeData(color: Colors.blue),
-                          items: <BottomNavigationBarItem>[
-                            BottomNavigationBarItem(
-                              icon: Column(
-                                children: [
-                                  const Icon(Icons.home),
-                                  const Text("Home"),
-                                  state.carbs == 0 ? indicator() : Container()
-                                ],
-                              ),
-                              label: 'Home',
-                            ),
-                            BottomNavigationBarItem(
-                              icon: Column(
-                                children: [
-                                  const Icon(Icons.bookmark),
-                                  const Text("Bookmarks"),
-                                  state.carbs == 1 ? indicator() : Container(),
-                                ],
-                              ),
-                              label: 'Bookmarks',
-                            ),
+                bottomNavigationBar: SizedBox(
+                  child: BottomNavigationBar(
+                    type: BottomNavigationBarType.fixed,
+                    currentIndex: state.index!,
+                    onTap: (index) => _selectTab(pageKeys[index], index),
+                    showSelectedLabels: false,
+                    showUnselectedLabels: false,
+                    selectedIconTheme: const IconThemeData(color: Colors.blue),
+                    items: <BottomNavigationBarItem>[
+                      BottomNavigationBarItem(
+                        icon: Column(
+                          children: [
+                            const Icon(Icons.home),
+                            const Text("Home"),
+                            state.index == 0 ? indicator() : Container()
                           ],
                         ),
-                      );
-                    }),
+                        label: 'Home',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Column(
+                          children: [
+                            const Icon(Icons.bookmark),
+                            const Text("Bookmarks"),
+                            state.index == 1 ? indicator() : Container(),
+                          ],
+                        ),
+                        label: 'Bookmarks',
+                      ),
+                    ],
+                  ),
+                ),
               ),
             );
           }),

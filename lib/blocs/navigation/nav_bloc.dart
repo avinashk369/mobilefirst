@@ -1,17 +1,17 @@
 import 'package:bloc/bloc.dart';
-import 'package:mobilefirst/models/todo_model.dart';
+import 'package:mobilefirst/models/navigation/nav_item.dart';
 
-class NavBloc extends Cubit<TodoModel> {
+class NavBloc extends Cubit<NavItem> {
   NavBloc()
-      : super(TodoModel()
+      : super(NavItem()
           ..name = "Page1"
-          ..carbs = 0);
+          ..index = 0);
 
   Future<void> changeNavigation(String page, int index) async {
     try {
-      TodoModel model = TodoModel()
+      NavItem model = NavItem()
         ..name = page
-        ..carbs = index;
+        ..index = index;
       emit(model);
     } catch (_) {}
   }
