@@ -32,9 +32,10 @@ class _WelcomeState extends State<Welcome> {
       ],
       child: Scaffold(
         body: Builder(builder: (context) {
-          return Demo(
-            navBloc: context.read<NavBloc>(),
-          );
+          // return Demo(
+          //   navBloc: context.read<NavBloc>(),
+          // );
+          return const TodoMgmt();
         }),
       ),
     );

@@ -5,7 +5,7 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class ToDOAdd extends StatefulWidget {
   final String? id;
-  ToDOAdd({Key? key, this.id}) : super(key: key);
+  const ToDOAdd({Key? key, this.id}) : super(key: key);
 
   @override
   State<ToDOAdd> createState() => _ToDOAddState();

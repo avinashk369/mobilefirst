@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mobilefirst/screens/bookmarks.dart';
 import 'package:mobilefirst/screens/home.dart';
 
-class TabNavigatorRoutes {
-  static const String root = '/';
-  static const String detail = '/detail';
-}
-
 class TabNavigator extends StatelessWidget {
   const TabNavigator(
       {Key? key, required this.navigatorKey, required this.tabItem})

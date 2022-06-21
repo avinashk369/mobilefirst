@@ -4,11 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:mobilefirst/models/todo_model.dart';
 import 'package:mobilefirst/repository/todo_repositoryImpl.dart';
 import 'package:mobilefirst/screens/todo/todo_add.dart';
 import 'package:mobilefirst/styles/styles.dart';
-import 'package:mobilefirst/widgets/custom_style_arrow.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 
@@ -280,37 +278,37 @@ class _TodoMgmtState extends State<TodoMgmt> {
             //     return const SizedBox.shrink();
             //   }),
             // ),
-            CustomPaint(
-              painter: CustomStyleArrow(Colors.grey),
-              child: Container(
-                padding: const EdgeInsets.only(
-                    left: 15, right: 15, bottom: 20, top: 20),
-                child: const Text(
-                  "This is the custom painter for arrow down curve",
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            Center(
-              child: Tooltip(
-                message: 'Hover Icon for Tooltip...',
-                padding: const EdgeInsets.all(20),
-                showDuration: const Duration(seconds: 10),
-                decoration: ShapeDecoration(
-                  color: Colors.blue,
-                  shape: ToolTipCustomShape(),
-                ),
-                textStyle: const TextStyle(color: Colors.white),
-                preferBelow: false,
-                verticalOffset: 20,
-                child: IconButton(
-                  icon: const Icon(Icons.info, size: 30.0),
-                  onPressed: () {},
-                ),
-              ),
-            ),
+            // CustomPaint(
+            //   painter: CustomStyleArrow(Colors.grey),
+            //   child: Container(
+            //     padding: const EdgeInsets.only(
+            //         left: 15, right: 15, bottom: 20, top: 20),
+            //     child: const Text(
+            //       "This is the custom painter for arrow down curve",
+            //       style: TextStyle(
+            //         color: Colors.white,
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            // Center(
+            //   child: Tooltip(
+            //     message: 'Hover Icon for Tooltip...',
+            //     padding: const EdgeInsets.all(20),
+            //     showDuration: const Duration(seconds: 10),
+            //     decoration: ShapeDecoration(
+            //       color: Colors.blue,
+            //       shape: ToolTipCustomShape(),
+            //     ),
+            //     textStyle: const TextStyle(color: Colors.white),
+            //     preferBelow: false,
+            //     verticalOffset: 20,
+            //     child: IconButton(
+            //       icon: const Icon(Icons.info, size: 30.0),
+            //       onPressed: () {},
+            //     ),
+            //   ),
+            // ),
           ],
         ),
         floatingActionButton: FloatingActionButton(

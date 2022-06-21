@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mobilefirst/apis/ApiClient.dart';
 import 'package:mobilefirst/models/todo_model.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
@@ -8,10 +9,8 @@ class TodoRepositoryImpl {
   late ApiClient apiClient;
   TodoRepositoryImpl() {
     dio = Dio();
-    dio.options.headers["X-Parse-Client-Key"] =
-        "XzJIfM50JsF8tuMi1USwsAGEpe7R0cvsF8MTV1mk";
-    dio.options.headers["X-Parse-Application-Id"] =
-        "OwYc53sQaycCCfvoEtnBJiILnqdLR7D8XTChzEn8";
+    dio.options.headers["X-Parse-Client-Key"] = dotenv.env['CLIENT_KEY'];
+    dio.options.headers["X-Parse-Application-Id"] = dotenv.env['APP_ID']!;
     //dio.interceptors.add(PrettyDioLogger());
     dio.interceptors.add(LogInterceptor(
       responseBody: true,

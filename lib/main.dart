@@ -27,7 +27,7 @@ void main() async {
     clientKey: dotenv.env['CLIENT_KEY'],
     debug: true,
     autoSendSessionId: true,
-    liveQueryUrl: "https://todoappdemo.b4a.io",
+    liveQueryUrl: "https://mobilefirst.b4a.io",
   );
 
   // var firstObject = ParseObject('FirstClass')
